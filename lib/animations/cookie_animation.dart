@@ -14,14 +14,10 @@ class _CookieAnimationState extends State<CookieAnimation>
     with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _bounceController;
-  late AnimationController _tapAnimationController;
   late Animation<double> _rotationAnimation;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _moveUpAnimation;
 
-  Offset? _tapPosition; // Holds the tap position
-  bool _showTapAnimation = false; // To control tap animation visibility
+  List<TapAnimation> _tapAnimations = [];
 
   @override
   void initState() {
@@ -29,7 +25,7 @@ class _CookieAnimationState extends State<CookieAnimation>
 
     // Rotation controller (infinite, slow)
     _rotationController = AnimationController(
-      duration: const Duration(seconds: 10), // Slow rotation
+      duration: const Duration(seconds: 10),
       vsync: this,
     )..repeat(); // Infinite repeat
 
@@ -42,7 +38,7 @@ class _CookieAnimationState extends State<CookieAnimation>
 
     // Bounce controller (triggered on tap)
     _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 50), // Short duration for a soft bounce
+      duration: const Duration(milliseconds: 50), // Shorter duration for a soft bounce
       vsync: this,
     );
 
@@ -52,50 +48,72 @@ class _CookieAnimationState extends State<CookieAnimation>
         curve: Curves.easeOut, // Softer bounce effect
       ),
     );
-
-    // Tap animation controller (for text movement and fade-out)
-    _tapAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600), // Animation duration for the tap text
-      vsync: this,
-    );
-
-    // Fade-out animation for tap text
-    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _tapAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    // Move-up animation for tap text
-    _moveUpAnimation = Tween<Offset>(begin: Offset.zero, end: const Offset(0, -1)).animate(
-      CurvedAnimation(
-        parent: _tapAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
   }
 
   @override
   void dispose() {
     _rotationController.dispose();
     _bounceController.dispose();
-    _tapAnimationController.dispose();
+    _tapAnimations.forEach((tapAnim) => tapAnim.controller.dispose());
     super.dispose();
   }
 
   void _handleTap(TapDownDetails details) {
     widget.onTap();
 
-    // Capture the tap position
+    // Start bounce animation
+    _bounceController.forward(from: 0.0);
+
+    // Create a new tap animation for this tap
+    _addTapAnimation(details.localPosition);
+  }
+
+  void _addTapAnimation(Offset position) {
+    // Create a new animation controller for the tap
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    // Create animations for fading and moving up
+    final fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeOut,
+      ),
+    );
+    final moveUpAnimation = Tween<Offset>(begin: Offset.zero, end: const Offset(0, -1)).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    // Create a new TapAnimation object to track this animation
+    final tapAnimation = TapAnimation(
+      position: position,
+      controller: controller,
+      fadeAnimation: fadeAnimation,
+      moveUpAnimation: moveUpAnimation,
+    );
+
+    // Add it to the list of tap animations
     setState(() {
-      _tapPosition = details.localPosition;
-      _showTapAnimation = true;
+      _tapAnimations.add(tapAnimation);
     });
 
-    // Start animations
-    _bounceController.forward(from: 0.0); // Trigger the bounce
-    _tapAnimationController.forward(from: 0.0); // Trigger the text animation
+    // Start the animation
+    controller.forward();
+
+    // Remove the animation when it's done
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _tapAnimations.remove(tapAnimation);
+        });
+        controller.dispose();
+      }
+    });
   }
 
   @override
@@ -119,18 +137,18 @@ class _CookieAnimationState extends State<CookieAnimation>
             child: widget.child,
           ),
 
-          // Tap animation for cookies gained
-          if (_showTapAnimation && _tapPosition != null)
-            Positioned(
-              left: _tapPosition!.dx - 20, // Adjust for text width
-              top: _tapPosition!.dy - 40, // Adjust for initial text height
+          // Render all active tap animations
+          ..._tapAnimations.map((tapAnim) {
+            return Positioned(
+              left: tapAnim.position.dx - 20, // Adjust for text width
+              top: tapAnim.position.dy - 40, // Adjust for initial text height
               child: AnimatedBuilder(
-                animation: _tapAnimationController,
+                animation: tapAnim.controller,
                 builder: (context, child) {
                   return Opacity(
-                    opacity: _fadeAnimation.value, // Fade out
+                    opacity: tapAnim.fadeAnimation.value, // Fade out
                     child: Transform.translate(
-                      offset: _moveUpAnimation.value * 30, // Move up by 30 pixels
+                      offset: tapAnim.moveUpAnimation.value * 30, // Move up by 30 pixels
                       child: child,
                     ),
                   );
@@ -144,9 +162,25 @@ class _CookieAnimationState extends State<CookieAnimation>
                   ),
                 ),
               ),
-            ),
+            );
+          }),
         ],
       ),
     );
   }
+}
+
+// Class to manage individual tap animations
+class TapAnimation {
+  final Offset position;
+  final AnimationController controller;
+  final Animation<double> fadeAnimation;
+  final Animation<Offset> moveUpAnimation;
+
+  TapAnimation({
+    required this.position,
+    required this.controller,
+    required this.fadeAnimation,
+    required this.moveUpAnimation,
+  });
 }
