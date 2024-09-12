@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-
-import 'models/achievement.dart';
+import 'ui/screens/mode_selection_page.dart';
 import 'services/game_service.dart';
 import 'services/sound_service.dart';
 import 'services/storage_service.dart';
-import 'ui/screens/main_page.dart';
+import 'models/achievement.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   final storageService = StorageService();
   await storageService.init();
 
-  final achievements = [
-    Achievement(
+  final gameService = GameService(
+    upgrades: [],
+    achievements: [ Achievement(
       title: 'First Cookie',
       description: 'Bake your first cookie',
       type: AchievementType.cookieCount,
@@ -41,22 +42,27 @@ void main() async {
       threshold: 10,
       icon: 'assets/icons/cookie_factory.png',
     ),
-  ];
-
-  final gameService = GameService(
-      upgrades: [], achievements: achievements, storageService: storageService);
+  ], 
+    storageService: storageService,
+  );
 
   final soundService = SoundService();
 
-  runApp(MyApp(gameService: gameService, soundService: soundService));
+  runApp(MyApp(
+    gameService: gameService,
+    soundService: soundService,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final GameService gameService;
   final SoundService soundService;
 
-  const MyApp(
-      {super.key, required this.gameService, required this.soundService});
+  const MyApp({
+    Key? key,
+    required this.gameService,
+    required this.soundService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +71,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(gameService: gameService, soundService: soundService),
+      home: ModeSelectionPage(
+        gameService: gameService,
+        soundService: soundService,
+      ),
     );
   }
 }
