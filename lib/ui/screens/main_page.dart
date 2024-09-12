@@ -84,11 +84,9 @@ class _MainPageState extends State<MainPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Add Spacer to push the cookie higher
                 const Spacer(flex: 1),
                 Text('Cookies: ${widget.gameService.cookieCount}'),
                 Text('Cookies per second: ${widget.gameService.cookiesPerSecond}'),
-
                 CookieAnimation(
                   onTap: _incrementCookies,
                   child: Image.asset(
@@ -97,7 +95,6 @@ class _MainPageState extends State<MainPage> {
                     height: 300,
                   ),
                 ),
-                // Use Spacer to adjust space below the cookie
                 const Spacer(flex: 2),
               ],
             ),
@@ -107,13 +104,11 @@ class _MainPageState extends State<MainPage> {
             left: 0,
             right: 0,
             child: Center(
-              // add a button to show the upgrades with an icon and a label
               child: ElevatedButton.icon(
                 onPressed: _showUpgradeDrawer,
                 icon: const Icon(Icons.arrow_circle_up),
                 label: const Text('Upgrades'),
               ),
-
             ),
           ),
         ],
