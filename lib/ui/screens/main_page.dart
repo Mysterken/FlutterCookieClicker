@@ -39,6 +39,7 @@ class _MainPageState extends State<MainPage> {
     final achievement = widget.gameService.achievementNotifier.value;
     if (achievement != null) {
       _showAchievementAnimation(achievement);
+      widget.soundService.playAchievementSound();
     }
   }
 
