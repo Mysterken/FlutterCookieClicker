@@ -1,7 +1,9 @@
 import 'package:cookie_clicker/ui/screens/settings_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../animations/achievement_animation.dart';
 import '../../animations/cookie_animation.dart';
+import '../../models/achievement.dart';
 import '../../services/game_service.dart';
 import '../../services/sound_service.dart';
 import '../widgets/upgrade_tile.dart';
@@ -23,6 +25,38 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     widget.gameService.loadGameData();
+    widget.gameService.achievementNotifier.addListener(_onAchievementUnlocked);
+  }
+
+  @override
+  void dispose() {
+    widget.gameService.achievementNotifier
+        .removeListener(_onAchievementUnlocked);
+    super.dispose();
+  }
+
+  void _onAchievementUnlocked() {
+    final achievement = widget.gameService.achievementNotifier.value;
+    if (achievement != null) {
+      _showAchievementAnimation(achievement);
+    }
+  }
+
+  void _showAchievementAnimation(Achievement achievement) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => AchievementAnimation(
+        achievementName: achievement.title,
+        achievementDescription: achievement.description,
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    // Remove the overlay after the animation duration
+    Future.delayed(const Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
   }
 
   void _incrementCookies() {

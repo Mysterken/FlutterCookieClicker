@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../models/achievement.dart';
 import '../models/upgrade.dart';
 import 'storage_service.dart';
@@ -8,6 +10,9 @@ class GameService {
   final List<Upgrade> upgrades;
   final List<Achievement> achievements;
   final StorageService storageService;
+
+  final ValueNotifier<Achievement?> achievementNotifier =
+      ValueNotifier<Achievement?>(null);
 
   GameService({
     required this.upgrades,
@@ -68,6 +73,7 @@ class GameService {
         }
         if (achievement.isUnlocked) {
           storageService.saveAchievements(achievements);
+          achievementNotifier.value = achievement;
         }
       }
     }
