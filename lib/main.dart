@@ -4,45 +4,47 @@ import 'services/game_service.dart';
 import 'services/sound_service.dart';
 import 'services/storage_service.dart';
 import 'models/achievement.dart';
+import 'ui/screens/login_page.dart';
+import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   final storageService = StorageService();
   await storageService.init();
 
   final gameService = GameService(
     upgrades: [],
-    achievements: [ Achievement(
-      title: 'First Cookie',
-      description: 'Bake your first cookie',
-      type: AchievementType.cookieCount,
-      threshold: 1,
-      icon: 'assets/icons/first_cookie.png',
-    ),
-    Achievement(
-      title: 'Hundred Cookies',
-      description: 'Bake 100 cookies',
-      type: AchievementType.cookieCount,
-      threshold: 100,
-      icon: 'assets/icons/hundred_cookies.png',
-    ),
-    Achievement(
-      title: 'First Upgrade',
-      description: 'Purchase your first upgrade',
-      type: AchievementType.upgradeCount,
-      threshold: 1,
-      icon: 'assets/icons/first_upgrade.png',
-    ),
-    Achievement(
-      title: 'Cookie Factory',
-      description: 'Reach 10 cookies per second',
-      type: AchievementType.cookiesPerSecond,
-      threshold: 10,
-      icon: 'assets/icons/cookie_factory.png',
-    ),
-  ], 
+    achievements: [
+      Achievement(
+        title: 'First Cookie',
+        description: 'Bake your first cookie',
+        type: AchievementType.cookieCount,
+        threshold: 1,
+        icon: 'assets/icons/first_cookie.png',
+      ),
+      Achievement(
+        title: 'Hundred Cookies',
+        description: 'Bake 100 cookies',
+        type: AchievementType.cookieCount,
+        threshold: 100,
+        icon: 'assets/icons/hundred_cookies.png',
+      ),
+      Achievement(
+        title: 'First Upgrade',
+        description: 'Purchase your first upgrade',
+        type: AchievementType.upgradeCount,
+        threshold: 1,
+        icon: 'assets/icons/first_upgrade.png',
+      ),
+      Achievement(
+        title: 'Cookie Factory',
+        description: 'Reach 10 cookies per second',
+        type: AchievementType.cookiesPerSecond,
+        threshold: 10,
+        icon: 'assets/icons/cookie_factory.png',
+      ),
+    ],
     storageService: storageService,
   );
 
@@ -71,7 +73,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ModeSelectionPage(
+      home: LoginPage(
         gameService: gameService,
         soundService: soundService,
       ),

@@ -3,6 +3,7 @@ import '../../services/game_service.dart';
 import '../../services/sound_service.dart';
 import 'survivor_page.dart';
 import 'main_page.dart';
+import 'timer_page.dart';
 
 class ModeSelectionPage extends StatelessWidget {
   final GameService gameService;
@@ -52,6 +53,21 @@ class ModeSelectionPage extends StatelessWidget {
                 );
               },
               child: const Text('Survivor Mode'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TimerPage(
+                      gameService: gameService,
+                      soundService: soundService,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Timer Mode'),
             ),
           ],
         ),
