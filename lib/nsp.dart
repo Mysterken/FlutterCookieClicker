@@ -32,7 +32,7 @@ class CookieClickerPageState extends State<CookieClickerPage> with SingleTickerP
   int _cookieCount = 0;
   final int _maxClicks = 70; 
   bool _isGameOver = false;
-  bool _isHardMode = false; 
+  bool _isTimerMode = false; 
   Timer? _timer; 
   Duration _timeRemaining = const Duration(minutes: 1 ); 
 
@@ -75,9 +75,9 @@ class CookieClickerPageState extends State<CookieClickerPage> with SingleTickerP
   }
 
  
-  void _startHardMode() {
+  void _startTimerMode() {
     setState(() {
-      _isHardMode = true; 
+      _isTimerMode = true; 
       _cookieCount = 0;
       _isGameOver = false;
       _timeRemaining = const Duration(minutes: 10); 
@@ -105,10 +105,10 @@ class CookieClickerPageState extends State<CookieClickerPage> with SingleTickerP
         _controller.reverse();
       });
 
-      if (_isHardMode) {
+      if (_isTimerMode) {
         _timeRemaining = const Duration(minutes: 10);
         _timer?.cancel();
-        _startHardMode();
+        _startTimerMode();
       }
     });
   }
@@ -151,8 +151,8 @@ class CookieClickerPageState extends State<CookieClickerPage> with SingleTickerP
         ],
         leading: IconButton( 
           icon: const Icon(Icons.alarm), 
-          onPressed: _startHardMode,
-          tooltip: 'Hard Mode',
+          onPressed: _startTimerMode,
+          tooltip: 'Timer Mode',
         ),
       ),
       body: Center(
@@ -167,7 +167,7 @@ class CookieClickerPageState extends State<CookieClickerPage> with SingleTickerP
               'Clicks restants: $clicksRemaining',
               style: const TextStyle(fontSize: 24),
             ),
-            if (_isHardMode) // Affiche le timer uniquement en mode difficile
+            if (_isTimerMode) 
               Text(
                 'Temps restant: ${formatTime(_timeRemaining)}',
                 style: const TextStyle(fontSize: 24, color: Colors.red),
