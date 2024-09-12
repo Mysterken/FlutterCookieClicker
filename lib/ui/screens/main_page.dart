@@ -1,3 +1,4 @@
+import 'package:cookie_clicker/ui/screens/settings_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../animations/cookie_animation.dart';
@@ -66,12 +67,28 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  void _navigateToSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsPage(
+          gameService: widget.gameService,
+          soundService: widget.soundService,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cookie Clicker'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _navigateToSettings,
+          ),
           IconButton(
             icon: const Icon(Icons.emoji_events),
             onPressed: _navigateToAchievements,
@@ -86,7 +103,8 @@ class _MainPageState extends State<MainPage> {
               children: [
                 const Spacer(flex: 1),
                 Text('Cookies: ${widget.gameService.cookieCount}'),
-                Text('Cookies per second: ${widget.gameService.cookiesPerSecond}'),
+                Text(
+                    'Cookies per second: ${widget.gameService.cookiesPerSecond}'),
                 CookieAnimation(
                   onTap: _incrementCookies,
                   child: Image.asset(

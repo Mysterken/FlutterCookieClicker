@@ -55,7 +55,8 @@ class GameService {
             }
             break;
           case AchievementType.upgradeCount:
-            if (upgrades.where((u) => u.isPurchased).length >= achievement.threshold) {
+            if (upgrades.where((u) => u.isPurchased).length >=
+                achievement.threshold) {
               achievement.isUnlocked = true;
             }
             break;
@@ -70,5 +71,22 @@ class GameService {
         }
       }
     }
+  }
+
+  void resetProgress() {
+    cookieCount = 0;
+    cookiesPerSecond = 0;
+
+    for (var upgrade in upgrades) {
+      upgrade.isPurchased = false;
+    }
+
+    for (var achievement in achievements) {
+      achievement.isUnlocked = false;
+    }
+
+    storageService.saveCookieCount(cookieCount);
+    storageService.saveUpgrades(upgrades);
+    storageService.saveAchievements(achievements);
   }
 }
