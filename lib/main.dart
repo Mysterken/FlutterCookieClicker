@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'ui/screens/mode_selection_page.dart';
+
+import 'models/achievement.dart';
 import 'services/game_service.dart';
 import 'services/sound_service.dart';
 import 'services/storage_service.dart';
-import 'models/achievement.dart';
 import 'ui/screens/login_page.dart';
-import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +26,38 @@ void main() async {
       type: AchievementType.cookieCount,
       threshold: 100,
       icon: 'assets/icons/hundred_cookies.png',
+    ),
+    Achievement(
+      title: 'Five Hundred Cookies',
+      description: 'Bake 500 cookies',
+      type: AchievementType.cookieCount,
+      threshold: 500,
+      icon:
+          'assets/icons/five_hundred_cookies.png', // Update with your icon path
+    ),
+    Achievement(
+      title: 'One Thousand Cookies',
+      description: 'Bake 1000 cookies',
+      type: AchievementType.cookieCount,
+      threshold: 1000,
+      icon:
+          'assets/icons/one_thousand_cookies.png', // Update with your icon path
+    ),
+    Achievement(
+      title: 'Five Thousand Cookies',
+      description: 'Bake 5000 cookies',
+      type: AchievementType.cookieCount,
+      threshold: 5000,
+      icon:
+          'assets/icons/five_thousand_cookies.png', // Update with your icon path
+    ),
+    Achievement(
+      title: 'Ten Thousand Cookies',
+      description: 'Bake 10,000 cookies',
+      type: AchievementType.cookieCount,
+      threshold: 10000,
+      icon:
+          'assets/icons/ten_thousand_cookies.png', // Update with your icon path
     ),
     Achievement(
       title: 'First Upgrade',
