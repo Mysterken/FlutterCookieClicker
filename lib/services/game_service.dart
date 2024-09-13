@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 import '../models/achievement.dart';
@@ -10,6 +12,7 @@ class GameService {
   final List<Upgrade> upgrades;
   final List<Achievement> achievements;
   final StorageService storageService;
+  Timer? _cpsTimer;
 
   final ValueNotifier<Achievement?> achievementNotifier =
       ValueNotifier<Achievement?>(null);
@@ -25,12 +28,20 @@ class GameService {
     storageService.loadUpgrades(upgrades);
     storageService.loadAchievements(achievements);
     _updateCPS();
+    _startCPSTimer();
   }
 
   void _updateCPS() {
     cookiesPerSecond = upgrades
         .where((upgrade) => upgrade.isPurchased)
         .fold(0.0, (total, upgrade) => total + upgrade.cps);
+  }
+
+  void _startCPSTimer() {
+    _cpsTimer?.cancel();
+    _cpsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      incrementCookies(cookiesPerSecond.toInt());
+    });
   }
 
   void purchaseUpgrade(Upgrade upgrade) {
