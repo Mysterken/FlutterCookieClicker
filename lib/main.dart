@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'models/achievement.dart';
+import 'ui/screens/mode_selection_page.dart';
 import 'services/game_service.dart';
 import 'services/sound_service.dart';
 import 'services/storage_service.dart';
-import 'ui/screens/main_page.dart';
+import 'models/achievement.dart';
+import 'ui/screens/login_page.dart';
+import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,7 +66,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(gameService: gameService, soundService: soundService),
+      home: LoginPage(
+        gameService: gameService,
+        soundService: soundService,
+      ),
     );
   }
 }
