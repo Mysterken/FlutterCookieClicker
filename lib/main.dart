@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'models/achievement.dart';
+import 'models/upgrade.dart';
 import 'services/game_service.dart';
 import 'services/sound_service.dart';
 import 'services/storage_service.dart';
@@ -75,8 +76,13 @@ void main() async {
     ),
   ];
 
+  final upgrades = [
+    Upgrade(name: 'Grandma', cost: 100, cps: 1.0),
+    Upgrade(name: 'Bakery', cost: 500, cps: 5.0),
+  ];
+
   final gameService = GameService(
-      upgrades: [], achievements: achievements, storageService: storageService);
+      upgrades: upgrades, achievements: achievements, storageService: storageService);
 
   final soundService = SoundService();
 
